@@ -41,3 +41,28 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+
+# AI Agent & IDE directories
+.agents/
+.claude/
+.windsurf/
+
+# Database files
+.neon
+*.db
+*.sqlite
+
+# OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# Temporary files
+*.tmp
+*.log
+tmp/
+temp/
