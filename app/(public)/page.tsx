@@ -29,7 +29,7 @@ export default function HomePage() {
         </p>
 
         <Link
-          href="/reservation"
+          href="/reservations"
           className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-7 py-3.5 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-400"
         >
           Reserve a Table
@@ -42,7 +42,7 @@ export default function HomePage() {
         <div className="grid gap-5 sm:grid-cols-2">
           {/* Make Reservation */}
           <Link
-            href="/reservation"
+            href="/reservations"
             className="group rounded-2xl border border-zinc-800 bg-zinc-900/60 p-7 transition hover:-translate-y-1 hover:border-emerald-500/50 hover:bg-zinc-900"
           >
             <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
