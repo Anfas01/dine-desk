@@ -53,9 +53,14 @@ export default function ReservationWindow() {
         setMessage({ text: "Table reserved. See you then!", error: false });
         setBookingDate("");
         setStartTime("");
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Failed to create reservation. Please try again.";
+
         setMessage({
-          text: err.message || "Failed to create reservation. Please try again.",
+          text: errorMessage,
           error: true,
         });
       }
@@ -122,7 +127,7 @@ export default function ReservationWindow() {
                 value={bookingDate}
                 onChange={(e) => setBookingDate(e.target.value)}
                 required
-                className="h-11 w-full rounded-lg border border-zinc-800 bg-zinc-950 pl-10 pr-4 text-sm text-white outline-none transition-all [color-scheme:dark] placeholder:text-zinc-700 hover:border-zinc-700 focus:border-emerald-500/70 focus:ring-2 focus:ring-emerald-500/10"
+                className="h-11 w-full rounded-lg border border-zinc-800 bg-zinc-950 pl-10 pr-4 text-sm text-white outline-none transition-all scheme-dark placeholder:text-zinc-700 hover:border-zinc-700 focus:border-emerald-500/70 focus:ring-2 focus:ring-emerald-500/10"
               />
             </div>
           </div>
@@ -140,7 +145,7 @@ export default function ReservationWindow() {
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
                 required
-                className="h-11 w-full rounded-lg border border-zinc-800 bg-zinc-950 pl-10 pr-4 text-sm text-white outline-none transition-all [color-scheme:dark] placeholder:text-zinc-700 hover:border-zinc-700 focus:border-emerald-500/70 focus:ring-2 focus:ring-emerald-500/10"
+                className="h-11 w-full rounded-lg border border-zinc-800 bg-zinc-950 pl-10 pr-4 text-sm text-white outline-none transition-all scheme-dark placeholder:text-zinc-700 hover:border-zinc-700 focus:border-emerald-500/70 focus:ring-2 focus:ring-emerald-500/10"
               />
             </div>
             <p className="mt-1.5 text-xs text-zinc-600">
@@ -151,11 +156,10 @@ export default function ReservationWindow() {
           {/* Message */}
           {message && (
             <div
-              className={`flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm ${
-                message.error
+              className={`flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm ${message.error
                   ? "border-red-500/20 bg-red-500/10 text-red-400"
                   : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
-              }`}
+                }`}
             >
               {message.error ? (
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
