@@ -11,7 +11,8 @@ import {
   X,
 } from "lucide-react";
 
-// Swap this for your real session/user type (e.g. from next-auth, Clerk, or your own auth context)
+import { logoutAction } from "@/actions/auth/logoutAction";
+
 export type NavUser = {
   name: string;
   email?: string;
@@ -19,12 +20,11 @@ export type NavUser = {
 
 type NavbarProps = {
   user?: NavUser | null;
-  onLogout?: () => void;
 };
 
 const navLinks = [{ label: "Reservations", href: "/reservations" }];
 
-export default function Navbar({ user = null, onLogout }: NavbarProps) {
+export default function Navbar({ user = null }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
@@ -83,17 +83,14 @@ export default function Navbar({ user = null, onLogout }: NavbarProps) {
                     <CalendarCheck className="h-4 w-4 text-zinc-500" />
                     My reservations
                   </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      onLogout?.();
-                    }}
-                    className="flex w-full items-center gap-2.5 border-t border-zinc-800/80 px-4 py-2.5 text-left text-sm text-zinc-300 transition-colors hover:bg-zinc-800/60 hover:text-white"
-                  >
-                    <LogOut className="h-4 w-4 text-zinc-500" />
-                    Log out
-                  </button>
+                    <button
+                      type="submit"
+                      onClick={logoutAction}
+                      className="flex w-full items-center gap-2.5 border-t border-zinc-800/80 px-4 py-2.5 text-left text-sm text-zinc-300 transition-colors hover:bg-zinc-800/60 hover:text-white"
+                    >
+                      <LogOut className="h-4 w-4 text-zinc-500" />
+                      Log out
+                    </button>
                 </div>
               )}
             </div>
@@ -165,17 +162,16 @@ export default function Navbar({ user = null, onLogout }: NavbarProps) {
                   <CalendarCheck className="h-4 w-4 text-zinc-500" />
                   My reservations
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    onLogout?.();
-                  }}
-                  className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-white"
-                >
-                  <LogOut className="h-4 w-4 text-zinc-500" />
-                  Log out
-                </button>
+                <form action={logoutAction}>
+                  <button
+                    type="submit"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-white"
+                  >
+                    <LogOut className="h-4 w-4 text-zinc-500" />
+                    Log out
+                  </button>
+                </form>
               </>
             ) : (
               <>

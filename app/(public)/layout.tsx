@@ -1,19 +1,16 @@
 import Navbar from "@/components/Navbar";
-// import { getSession } from "@/lib/auth"; // wire up your real session lookup
+import { getUser } from "@/lib/auth/getUser";
 
 export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Replace with your real auth check, e.g.:
-  // const session = await getSession();
-  // const user = session ? { name: session.user.name, email: session.user.email } : null;
-  const user = null;
+  const user = await getUser();
 
   return (
     <>
-      <Navbar user={user} />
+      <Navbar user={user ? { name: user.name, email: user.email } : null} />
       {children}
     </>
   );
