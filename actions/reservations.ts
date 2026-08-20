@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { TableBooking } from "@prisma/client";
+import { TableBooking } from "@/generated/prisma/client";
 
 import { getUser } from "@/lib/auth/get-user";
 import { prisma } from "@/lib/prisma";
