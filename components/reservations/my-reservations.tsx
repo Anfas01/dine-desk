@@ -1,7 +1,7 @@
 "use client";
 
 import { CalendarX2 } from "lucide-react";
-import { cancelReservation } from "@/actions/reservation/cancelReservation";
+import { cancelReservation } from "@/actions/reservations";
 
 type BookingStatus = "CONFIRMED" | "PENDING" | "CANCELLED" | "COMPLETED";
 

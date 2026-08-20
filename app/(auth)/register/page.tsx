@@ -10,9 +10,10 @@ import {
   Mail,
   User,
 } from "lucide-react";
-import { registerAction } from "@/actions/auth/registerAction";
 
-const initialState = {
+import { registerAction, type AuthState } from "@/actions/auth";
+
+const initialState: AuthState = {
   success: false,
   message: "",
 };
@@ -186,10 +187,10 @@ export default function RegisterPage() {
             {/* Server Action Message */}
             {state.message && (
               <p
-                className={`text-sm ${
+                className={`rounded-lg border px-3 py-2.5 text-sm ${
                   state.success
-                    ? "text-emerald-400"
-                    : "text-red-400"
+                    ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                    : "border-red-500/20 bg-red-500/10 text-red-400"
                 }`}
               >
                 {state.message}

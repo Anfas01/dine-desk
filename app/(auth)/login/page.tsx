@@ -10,14 +10,19 @@ import {
   Mail,
 } from "lucide-react";
 
-import { loginAction } from "@/actions/auth/loginAction";
+import { loginAction, type AuthState } from "@/actions/auth";
+
+const initialState: AuthState = {
+  success: false,
+  message: "",
+};
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [state, formAction, isPending] = useActionState(
     loginAction,
-    null
+    initialState
   );
 
   return (
@@ -118,10 +123,16 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Error */}
-            {state?.error && (
-              <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2.5 text-sm text-red-400">
-                {state.error}
+            {/* Server Action Message */}
+            {state.message && (
+              <p
+                className={`rounded-lg border px-3 py-2.5 text-sm ${
+                  state.success
+                    ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                    : "border-red-500/20 bg-red-500/10 text-red-400"
+                }`}
+              >
+                {state.message}
               </p>
             )}
 

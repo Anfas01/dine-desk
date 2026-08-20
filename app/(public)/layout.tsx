@@ -1,5 +1,5 @@
-import Navbar from "@/components/Navbar";
-import { getUser } from "@/lib/auth/getUser";
+import Navbar from "@/components/layout/navbar";
+import { getUser } from "@/lib/auth/get-user";
 
 export default async function PublicLayout({
   children,

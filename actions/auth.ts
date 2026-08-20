@@ -7,21 +7,17 @@ import { createToken } from "@/lib/auth/jwt";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/prisma";
 
-// --- Types ---
-
 export type AuthState = {
-  success?: boolean;
-  message?: string;
-  error?: string;
-} | null;
-
-// --- Helpers ---
+  success: boolean;
+  message: string;
+};
 
 const AUTH_COOKIE_NAME = "token";
 const SEVEN_DAYS_IN_SECONDS = 60 * 60 * 24 * 7;
 
 async function setAuthCookie(token: string) {
   const cookieStore = await cookies();
+
   cookieStore.set(AUTH_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -31,20 +27,18 @@ async function setAuthCookie(token: string) {
   });
 }
 
-// --- Actions ---
-
-/**
- * Authenticates user credentials and sets the session cookie.
- */
 export async function loginAction(
   prevState: AuthState,
   formData: FormData
 ): Promise<AuthState> {
-  const email = formData.get("email")?.toString().trim();
+  const email = formData.get("email")?.toString().trim().toLowerCase();
   const password = formData.get("password")?.toString();
 
   if (!email || !password) {
-    return { success: false, error: "Email and password are required." };
+    return {
+      success: false,
+      message: "Email and password are required.",
+    };
   }
 
   try {
@@ -53,28 +47,39 @@ export async function loginAction(
     });
 
     if (!user) {
-      return { success: false, error: "Invalid email or password." };
+      return {
+        success: false,
+        message: "Invalid email or password.",
+      };
     }
 
-    const isPasswordValid = await verifyPassword(password, user.password);
+    const isPasswordValid = await verifyPassword(
+      password,
+      user.password
+    );
 
     if (!isPasswordValid) {
-      return { success: false, error: "Invalid email or password." };
+      return {
+        success: false,
+        message: "Invalid email or password.",
+      };
     }
 
     const token = await createToken(user.id);
+
     await setAuthCookie(token);
   } catch (error) {
     console.error("Login error:", error);
-    return { success: false, error: "Something went wrong. Please try again." };
+
+    return {
+      success: false,
+      message: "Something went wrong. Please try again.",
+    };
   }
 
   redirect("/");
 }
 
-/**
- * Registers a new user account and sets the session cookie.
- */
 export async function registerAction(
   prevState: AuthState,
   formData: FormData
@@ -82,18 +87,29 @@ export async function registerAction(
   const name = formData.get("name")?.toString().trim();
   const email = formData.get("email")?.toString().trim().toLowerCase();
   const password = formData.get("password")?.toString();
-  const confirmPassword = formData.get("confirmPassword")?.toString();
+  const confirmPassword = formData
+    .get("confirmPassword")
+    ?.toString();
 
   if (!name || !email || !password || !confirmPassword) {
-    return { success: false, message: "Please fill in all fields." };
+    return {
+      success: false,
+      message: "Please fill in all fields.",
+    };
   }
 
   if (password.length < 6) {
-    return { success: false, message: "Password must be at least 6 characters." };
+    return {
+      success: false,
+      message: "Password must be at least 6 characters.",
+    };
   }
 
   if (password !== confirmPassword) {
-    return { success: false, message: "Passwords do not match." };
+    return {
+      success: false,
+      message: "Passwords do not match.",
+    };
   }
 
   try {
@@ -102,7 +118,10 @@ export async function registerAction(
     });
 
     if (existingUser) {
-      return { success: false, message: "An account with this email already exists." };
+      return {
+        success: false,
+        message: "An account with this email already exists.",
+      };
     }
 
     const hashedPassword = await hashPassword(password);
@@ -116,20 +135,24 @@ export async function registerAction(
     });
 
     const token = await createToken(user.id);
+
     await setAuthCookie(token);
   } catch (error) {
     console.error("Registration error:", error);
-    return { success: false, message: "Something went wrong. Please try again." };
+
+    return {
+      success: false,
+      message: "Something went wrong. Please try again.",
+    };
   }
 
   redirect("/");
 }
 
-/**
- * Deletes the authentication cookie and redirects to the home page.
- */
 export async function logoutAction() {
   const cookieStore = await cookies();
+
   cookieStore.delete(AUTH_COOKIE_NAME);
+
   redirect("/");
 }

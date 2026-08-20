@@ -12,7 +12,7 @@ import {
   Users,
 } from "lucide-react";
 
-import { createReservation } from "@/actions/reservation/createReservationAction";
+import { createReservation } from "@/actions/reservations";
 
 const todayISO = () => new Date().toISOString().split("T")[0];
 

@@ -11,7 +11,7 @@ import {
   X,
 } from "lucide-react";
 
-import { logoutAction } from "@/actions/auth/logoutAction";
+import { logoutAction } from "@/actions/auth";
 
 export type NavUser = {
   name: string;

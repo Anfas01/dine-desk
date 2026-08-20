@@ -1,24 +1,21 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { TableBooking } from "@prisma/client";
 
-import { getUser } from "@/lib/auth/getUser";
-import { createToken } from "@/lib/auth/jwt";
-import { hashPassword } from "@/lib/auth/password";
+import { getUser } from "@/lib/auth/get-user";
 import { prisma } from "@/lib/prisma";
-import findTable from "@/lib/reservation/findTable";
+import findTable from "@/lib/reservation/find-table";
 
 // --- Types ---
 
-export type ActionResponse<T = null> = {
+export type ActionResponse<T = unknown> = {
   success: boolean;
   message: string;
   data?: T;
 };
 
-export type ReservationInput = {
+export type CreateReservationInput = {
   capacity: number;
   bookingDate: Date;
   startTime: Date;
@@ -27,73 +24,11 @@ export type ReservationInput = {
 // --- Actions ---
 
 /**
- * Handles user registration, creates a session token, and sets the auth cookie.
- */
-export async function registerAction(
-  prevState: ActionResponse,
-  formData: FormData
-): Promise<ActionResponse> {
-  const name = formData.get("name")?.toString().trim();
-  const email = formData.get("email")?.toString().trim().toLowerCase();
-  const password = formData.get("password")?.toString();
-  const confirmPassword = formData.get("confirmPassword")?.toString();
-
-  // Input Validation
-  if (!name || !email || !password || !confirmPassword) {
-    return { success: false, message: "Please fill in all fields." };
-  }
-
-  if (password.length < 6) {
-    return { success: false, message: "Password must be at least 6 characters." };
-  }
-
-  if (password !== confirmPassword) {
-    return { success: false, message: "Passwords do not match." };
-  }
-
-  try {
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
-      return { success: false, message: "An account with this email already exists." };
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-      },
-    });
-
-    const token = await createToken(user.id);
-    const cookieStore = await cookies();
-
-    cookieStore.set("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: "/",
-    });
-  } catch (error) {
-    console.error("Registration error:", error);
-    return { success: false, message: "Something went wrong. Please try again." };
-  }
-
-  redirect("/");
-}
-
-/**
- * Validates availability and creates a table reservation for the authenticated user.
+ * Creates a new table reservation after verifying user authentication and table availability.
  */
 export async function createReservation(
-  input: ReservationInput
-): Promise<ActionResponse> {
+  input: CreateReservationInput
+): Promise<ActionResponse<TableBooking>> {
   try {
     const user = await getUser();
     if (!user?.id) {
@@ -115,7 +50,7 @@ export async function createReservation(
       return { success: false, message: "Please select a time in the future." };
     }
 
-    // 1.5 hours duration
+    // Calculate end time (1.5 hours after start time)
     const endTime = new Date(input.startTime.getTime() + 90 * 60 * 1000);
 
     const table = await findTable(
@@ -142,6 +77,7 @@ export async function createReservation(
     });
 
     revalidatePath("/my-reservations");
+    revalidatePath("/reservations");
 
     return {
       success: true,
@@ -155,7 +91,63 @@ export async function createReservation(
 }
 
 /**
- * Retrieves all reservations associated with the current user.
+ * Cancels an existing reservation if conditions are met (user ownership, active status, future date).
+ */
+export async function cancelReservation(
+  reservationId: string
+): Promise<ActionResponse<TableBooking>> {
+  try {
+    const user = await getUser();
+    if (!user?.id) {
+      return { success: false, message: "You must be logged in to cancel a reservation." };
+    }
+
+    const reservation = await prisma.tableBooking.findUnique({
+      where: { id: reservationId },
+      select: { id: true, userId: true, status: true, startTime: true },
+    });
+
+    if (!reservation) {
+      return { success: false, message: "Reservation not found." };
+    }
+
+    if (reservation.userId !== user.id) {
+      return { success: false, message: "You don't have permission to cancel this reservation." };
+    }
+
+    if (reservation.status === "CANCELLED") {
+      return { success: false, message: "This reservation is already cancelled." };
+    }
+
+    if (reservation.status === "COMPLETED") {
+      return { success: false, message: "Completed reservations cannot be cancelled." };
+    }
+
+    if (reservation.startTime.getTime() < Date.now()) {
+      return { success: false, message: "Past or ongoing reservations cannot be cancelled." };
+    }
+
+    const updated = await prisma.tableBooking.update({
+      where: { id: reservationId },
+      data: { status: "CANCELLED" },
+    });
+
+    revalidatePath("/my-reservations");
+    revalidatePath("/reservations");
+
+    return {
+      success: true,
+      message: "Reservation cancelled successfully.",
+      data: updated,
+    };
+  } catch (error) {
+    console.error("Cancel reservation error:", error);
+    return { success: false, message: "Failed to cancel reservation. Please try again." };
+  }
+}
+
+/**
+ * Retrieves all reservations belonging to the currently authenticated user.
  */
 export async function getUserReservations() {
   const user = await getUser();

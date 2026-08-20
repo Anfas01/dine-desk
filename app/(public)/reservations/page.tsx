@@ -1,4 +1,4 @@
-import ReservationWindow from "@/components/ReservationWindow";
+import ReservationWindow from "@/components/reservations/reservation-form";
 
 export default async function ReservationPage() {
   return (
