@@ -31,27 +31,45 @@ export async function createReservation(
 ): Promise<ActionResponse<TableBooking>> {
   try {
     const user = await getUser();
+
     if (!user?.id) {
-      return { success: false, message: "You must be logged in to make a reservation." };
+      return {
+        success: false,
+        message: "You must be logged in to make a reservation.",
+      };
     }
 
-    if (!Number.isFinite(input.capacity) || input.capacity < 1 || input.capacity > 12) {
-      return { success: false, message: "Party size must be between 1 and 12 guests." };
+    if (
+      !Number.isFinite(input.capacity) ||
+      input.capacity < 1 ||
+      input.capacity > 12
+    ) {
+      return {
+        success: false,
+        message: "Party size must be between 1 and 12 guests.",
+      };
     }
 
     if (
       Number.isNaN(input.startTime.getTime()) ||
       Number.isNaN(input.bookingDate.getTime())
     ) {
-      return { success: false, message: "Please select a valid date and time." };
+      return {
+        success: false,
+        message: "Please select a valid date and time.",
+      };
     }
 
     if (input.startTime.getTime() < Date.now()) {
-      return { success: false, message: "Please select a time in the future." };
+      return {
+        success: false,
+        message: "Please select a time in the future.",
+      };
     }
 
-    // Calculate end time (1.5 hours after start time)
-    const endTime = new Date(input.startTime.getTime() + 90 * 60 * 1000);
+    const endTime = new Date(
+      input.startTime.getTime() + 90 * 60 * 1000
+    );
 
     const table = await findTable(
       input.capacity,
@@ -61,7 +79,10 @@ export async function createReservation(
     );
 
     if (!table) {
-      return { success: false, message: "No available tables found for the selected time slot." };
+      return {
+        success: false,
+        message: "No available tables found for the selected time slot.",
+      };
     }
 
     const tableBooking = await prisma.tableBooking.create({
@@ -86,7 +107,11 @@ export async function createReservation(
     };
   } catch (error) {
     console.error("Create reservation error:", error);
-    return { success: false, message: "Failed to create reservation. Please try again." };
+
+    return {
+      success: false,
+      message: "Failed to create reservation. Please try again.",
+    };
   }
 }
 

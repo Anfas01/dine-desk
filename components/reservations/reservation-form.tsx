@@ -32,35 +32,69 @@ export default function ReservationWindow() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     setMessage(null);
 
     if (!bookingDate || !startTime) {
-      setMessage({ text: "Please select both date and start time.", error: true });
+      setMessage({
+        text: "Please select both date and start time.",
+        error: true,
+      });
       return;
     }
 
     const startDateTime = new Date(`${bookingDate}T${startTime}`);
-    const selectedDate = new Date(bookingDate);
+    const selectedDate = new Date(`${bookingDate}T00:00:00`);
+
+    if (
+      Number.isNaN(startDateTime.getTime()) ||
+      Number.isNaN(selectedDate.getTime())
+    ) {
+      setMessage({
+        text: "Please select a valid date and time.",
+        error: true,
+      });
+      return;
+    }
+
+    if (startDateTime.getTime() < Date.now()) {
+      setMessage({
+        text: "Please select a future time.",
+        error: true,
+      });
+      return;
+    }
 
     startTransition(async () => {
       try {
-        await createReservation({
+        const result = await createReservation({
           capacity,
           bookingDate: selectedDate,
           startTime: startDateTime,
         });
 
-        setMessage({ text: "Table reserved. See you then!", error: false });
+        // Server returned an error
+        if (!result.success) {
+          setMessage({
+            text: result.message,
+            error: true,
+          });
+          return;
+        }
+
+        // Reservation successful
+        setMessage({
+          text: result.message,
+          error: false,
+        });
+
         setBookingDate("");
         setStartTime("");
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Failed to create reservation. Please try again.";
+      } catch (error) {
+        console.error("Reservation error:", error);
 
         setMessage({
-          text: errorMessage,
+          text: "Something went wrong. Please try again.",
           error: true,
         });
       }
@@ -157,8 +191,8 @@ export default function ReservationWindow() {
           {message && (
             <div
               className={`flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm ${message.error
-                  ? "border-red-500/20 bg-red-500/10 text-red-400"
-                  : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                ? "border-red-500/20 bg-red-500/10 text-red-400"
+                : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
                 }`}
             >
               {message.error ? (
