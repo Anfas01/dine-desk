@@ -1,5 +1,5 @@
 import { getUserReservations } from "@/actions/reservations";
-import MyReservations from "@/components/reservations/my-reservations";
+import MyReservations from "@/components/reservations/MyReservations";
 
 export default async function ReservationsListPage() {
   const reservations = await getUserReservations();

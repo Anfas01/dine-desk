@@ -183,7 +183,7 @@ export async function getUserReservations() {
 
   return await prisma.tableBooking.findMany({
     where: { userId: user.id },
-    orderBy: { startTime: "desc" },
+    orderBy: { startTime: "asc" },
     select: {
       id: true,
       bookingDate: true,
