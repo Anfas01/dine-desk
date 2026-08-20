@@ -1,4 +1,7 @@
+"use client";
+
 import { CalendarX2 } from "lucide-react";
+import { cancelReservation } from "@/actions/reservation/cancelReservation";
 
 type BookingStatus = "CONFIRMED" | "PENDING" | "CANCELLED" | "COMPLETED";
 
@@ -109,6 +112,7 @@ export default function MyReservations({ reservations }: MyReservationsProps) {
                 {reservation.status === "CONFIRMED" && (
                   <button
                     type="button"
+                    onClick={() => cancelReservation(reservation.id)}
                     className="text-xs text-zinc-600 transition-colors hover:text-red-400"
                   >
                     Cancel
