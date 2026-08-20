@@ -201,3 +201,40 @@ export async function getUserReservations() {
     },
   });
 }
+
+/**
+ * Retrieves a single reservation belonging to the currently authenticated user.
+ */
+export async function getReservationById(reservationId: string) {
+  const user = await getUser();
+
+  if (!user?.id) {
+    throw new Error("You must be logged in to view this reservation.");
+  }
+
+  if (!reservationId) {
+    return null;
+  }
+
+  return await prisma.tableBooking.findFirst({
+    where: {
+      id: reservationId,
+      userId: user.id,
+    },
+    select: {
+      id: true,
+      bookingDate: true,
+      startTime: true,
+      endTime: true,
+      guests: true,
+      status: true,
+      table: {
+        select: {
+          id: true,
+          number: true,
+          capacity: true,
+        },
+      },
+    },
+  });
+}
