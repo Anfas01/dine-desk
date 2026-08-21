@@ -87,12 +87,14 @@ export default function Navbar({ user = null }: NavbarProps) {
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-8 md:flex">
-          <Link
-            href="/book-table"
-            className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
-          >
-            Book a Table
-          </Link>
+          {user && (
+            <Link
+              href="/book-table"
+              className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
+            >
+              Book a Table
+            </Link>
+          )}
 
           {user && (
             <Link
@@ -120,9 +122,7 @@ export default function Navbar({ user = null }: NavbarProps) {
                   <UserIcon className="h-4 w-4" />
                 </span>
 
-                <span className="max-w-28 truncate">
-                  {user.name}
-                </span>
+                <span className="max-w-28 truncate">{user.name}</span>
 
                 <ChevronDown
                   className={`h-3.5 w-3.5 text-zinc-500 transition-transform duration-200 ${
@@ -219,14 +219,16 @@ export default function Navbar({ user = null }: NavbarProps) {
         <div className="border-t border-zinc-800/80 bg-zinc-950 px-6 pb-6 pt-4 md:hidden">
           <div className="flex flex-col gap-1">
             {/* Book a Table */}
-            <Link
-              href="/book-table"
-              onClick={closeMenus}
-              className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-white"
-            >
-              <CalendarCheck className="h-4 w-4 text-zinc-500" />
-              Book a Table
-            </Link>
+            {user && (
+              <Link
+                href="/book-table"
+                onClick={closeMenus}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-white"
+              >
+                <CalendarCheck className="h-4 w-4 text-zinc-500" />
+                Book a Table
+              </Link>
+            )}
 
             {/* My Reservations */}
             {user && (

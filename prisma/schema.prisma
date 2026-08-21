@@ -7,25 +7,31 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id        String        @id @default(cuid())
-  name      String
-  email     String        @unique
-  password  String
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+enum UserRole {
+  USER
+  ADMIN
+}
 
-  bookings  TableBooking[]
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings TableBooking[]
 }
 
 model Table {
-  id        String        @id @default(cuid())
-  number    Int           @unique
+  id        String   @id @default(cuid())
+  number    Int      @unique
   capacity  Int
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  bookings  TableBooking[]
+  bookings TableBooking[]
 }
 
 model TableBooking {
@@ -40,8 +46,8 @@ model TableBooking {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  table       Table         @relation(fields: [tableId], references: [id])
-  user        User          @relation(fields: [userId], references: [id])
+  table Table @relation(fields: [tableId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
 
   @@index([tableId, bookingDate])
   @@index([userId])
