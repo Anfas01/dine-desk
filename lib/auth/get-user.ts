@@ -1,11 +1,10 @@
 import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/auth/jwt"; // adjust to wherever createToken/verifyToken live
-import { prisma } from "@/lib/prisma"; // adjust to wherever your Prisma client is exported from
-
+import { verifyToken } from "@/lib/auth/jwt";
+import { prisma } from "@/lib/prisma";
 
 /**
- * Reads the auth cookie and returns the decoded JWT payload, or null
- * if there's no cookie or it's invalid/expired. Cheap — no DB call.
+ * Reads the auth cookie and returns the decoded JWT payload,
+ * or null if there's no cookie or the token is invalid/expired.
  */
 export async function getSession() {
   const cookieStore = await cookies();
@@ -13,21 +12,27 @@ export async function getSession() {
 
   if (!token) return null;
 
-  return verifyToken(token); // { userId, iat, exp } | null
+  return verifyToken(token);
 }
 
 /**
  * Resolves the full user record for the current request.
- * Returns null if not logged in or the user no longer exists.
+ * Returns null if the user is not logged in or no longer exists.
  */
 export async function getUser() {
   const session = await getSession();
+
   if (!session) return null;
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { id: true, name: true, email: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+    },
   });
 
-  return user; // { id, name, email } | null
+  return user;
 }

@@ -1,8 +1,8 @@
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client";
+import { hashPassword } from "../lib/auth/password";
 
-// Setup pg Pool and Prisma Adapter
 const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
@@ -11,13 +11,13 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log("Start seeding tables...");
 
-  // Optional: Clear existing tables to avoid duplicate table numbers on re-runs
+  // Clear existing tables
   await prisma.table.deleteMany({});
 
   const tablesData: { number: number; capacity: number }[] = [];
   let tableNumber = 1;
 
-  // 1. Two tables with capacity 8
+  // 2 tables with capacity 8
   for (let i = 0; i < 2; i++) {
     tablesData.push({
       number: tableNumber++,
@@ -25,7 +25,7 @@ async function main() {
     });
   }
 
-  // 2. Four tables with capacity 4
+  // 4 tables with capacity 4
   for (let i = 0; i < 4; i++) {
     tablesData.push({
       number: tableNumber++,
@@ -33,7 +33,7 @@ async function main() {
     });
   }
 
-  // 3. Eight tables with capacity 2
+  // 8 tables with capacity 2
   for (let i = 0; i < 8; i++) {
     tablesData.push({
       number: tableNumber++,
@@ -41,12 +41,35 @@ async function main() {
     });
   }
 
-  // Insert all 14 tables into the database
   await prisma.table.createMany({
     data: tablesData,
   });
 
   console.log(`Successfully seeded ${tablesData.length} tables!`);
+
+  // -------------------------
+  // Create Admin User
+  // -------------------------
+
+  const hashedPassword = await hashPassword("admin123");
+
+  await prisma.user.upsert({
+    where: {
+      email: "admin123@gmail.com",
+    },
+    update: {
+      name: "admin",
+      role: "ADMIN",
+    },
+    create: {
+      name: "admin",
+      email: "admin123@gmail.com",
+      password: hashedPassword,
+      role: "ADMIN",
+    },
+  });
+
+  console.log("Successfully seeded admin user!");
 }
 
 main()

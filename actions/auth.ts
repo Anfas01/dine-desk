@@ -41,8 +41,10 @@ export async function loginAction(
     };
   }
 
+  let user;
+
   try {
-    const user = await prisma.user.findUnique({
+    user = await prisma.user.findUnique({
       where: { email },
     });
 
@@ -75,6 +77,10 @@ export async function loginAction(
       success: false,
       message: "Something went wrong. Please try again.",
     };
+  }
+
+  if (user.role === "ADMIN") {
+    redirect("/admin");
   }
 
   redirect("/");
