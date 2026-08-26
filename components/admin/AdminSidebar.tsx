@@ -5,8 +5,11 @@ import { usePathname } from "next/navigation";
 import {
   CalendarDays,
   LayoutDashboard,
+  LogOut,
   Table2,
 } from "lucide-react";
+
+import { logoutAction } from "@/actions/auth";
 
 const navigation = [
   {
@@ -78,14 +81,25 @@ export default function AdminSidebar() {
           })}
         </nav>
 
-        {/* Back to site */}
-        <div className="border-t border-zinc-800/80 p-3">
+        {/* Footer Actions */}
+        <div className="space-y-1 border-t border-zinc-800/80 p-3">
+          {/* Back to site */}
           <Link
             href="/"
             className="flex items-center rounded-lg px-3 py-2.5 text-sm text-zinc-500 transition-colors hover:bg-zinc-900/60 hover:text-white"
           >
             Back to website
           </Link>
+
+          {/* Logout */}
+          <button
+            type="button"
+            onClick={logoutAction}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-500 transition-colors hover:bg-zinc-900/60 hover:text-red-400"
+          >
+            <LogOut className="h-4 w-4 text-zinc-600 transition-colors group-hover:text-red-400" />
+            Log out
+          </button>
         </div>
       </div>
     </aside>

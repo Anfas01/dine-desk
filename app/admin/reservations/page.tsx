@@ -55,7 +55,7 @@ export default async function AdminReservationsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[800px] text-left">
+              <table className="w-full min-w-800px text-left">
                 <thead className="border-b border-zinc-800/80">
                   <tr>
                     <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-zinc-600">

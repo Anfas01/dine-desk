@@ -93,7 +93,7 @@ export async function createReservation(
         startTime: input.startTime,
         endTime,
         guests: input.capacity,
-        status: "CONFIRMED",
+        // 'status' omitted to naturally default to PENDING from your Prisma schema
       },
     });
 
@@ -102,7 +102,7 @@ export async function createReservation(
 
     return {
       success: true,
-      message: "Reservation confirmed successfully!",
+      message: "Reservation request submitted and is pending confirmation!",
       data: tableBooking,
     };
   } catch (error) {

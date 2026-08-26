@@ -42,7 +42,7 @@ model TableBooking {
   startTime   DateTime
   endTime     DateTime
   guests      Int
-  status      BookingStatus @default(CONFIRMED)
+  status      BookingStatus @default(PENDING)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
@@ -55,6 +55,7 @@ model TableBooking {
 
 enum BookingStatus {
   CONFIRMED
+  PENDING
   CANCELLED
   COMPLETED
 }
