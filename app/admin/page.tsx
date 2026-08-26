@@ -43,22 +43,6 @@ function StatCard({
   );
 }
 
-function formatDate(date: Date | string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
-function formatTime(time: Date | string) {
-  return new Date(time).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
-
 export default async function AdminPage() {
   const [stats, todayReservations] = await Promise.all([
     getAdminReservationStats(),
@@ -198,8 +182,6 @@ export default async function AdminPage() {
                         <AdminReservationRow
                           key={adminReservation.id}
                           reservation={adminReservation}
-                          formatDate={formatDate}
-                          formatTime={formatTime}
                         />
                       );
                     })}

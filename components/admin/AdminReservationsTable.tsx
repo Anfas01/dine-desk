@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   AdminReservation,
@@ -6,14 +8,10 @@ import {
 
 interface AdminReservationsTableProps {
   reservations: AdminReservation[];
-  formatDate: (date: Date | string) => string;
-  formatTime: (time: Date | string) => string;
 }
 
 export function AdminReservationsTable({
   reservations,
-  formatDate,
-  formatTime,
 }: AdminReservationsTableProps) {
   if (reservations.length === 0) {
     return (
@@ -54,8 +52,6 @@ export function AdminReservationsTable({
             <AdminReservationRow
               key={reservation.id}
               reservation={reservation}
-              formatDate={formatDate}
-              formatTime={formatTime}
             />
           ))}
         </tbody>

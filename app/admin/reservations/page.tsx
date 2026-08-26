@@ -1,20 +1,5 @@
 import { getAllReservations } from "@/lib/admin/reservations";
-import { AdminReservationsTable } from "@/components/admin/AdminReservationsTable"; // Adjust path as needed
-
-function formatDate(date: Date | string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
-function formatTime(date: Date | string) {
-  return new Date(date).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
+import { AdminReservationsTable } from "@/components/admin/AdminReservationsTable";
 
 export default async function AdminReservationsPage() {
   const reservations = await getAllReservations();
@@ -24,7 +9,7 @@ export default async function AdminReservationsPage() {
       <div className="mx-auto w-full max-w-6xl">
         {/* Header */}
         <div className="mb-8">
-          <p className="text-sm text-zinc-500">Management</p>
+          <p className="text-sm font-medium text-zinc-500">Management</p>
 
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white">
             Reservations
@@ -37,11 +22,7 @@ export default async function AdminReservationsPage() {
 
         {/* Reservations Table */}
         <div className="overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900/40">
-          <AdminReservationsTable
-            reservations={reservations}
-            formatDate={formatDate}
-            formatTime={formatTime}
-          />
+          <AdminReservationsTable reservations={reservations} />
         </div>
       </div>
     </main>
