@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "actions/admin/getTableById.ts"  ],
   "exclude": ["node_modules"]
 }

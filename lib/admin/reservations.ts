@@ -1,31 +1,30 @@
 import { prisma } from "@/lib/prisma";
 
 export async function getAdminReservationStats() {
-  const [total, confirmed, cancelled, completed] =
-    await Promise.all([
-      prisma.tableBooking.count(),
-      prisma.tableBooking.count({
-        where: {
-          status: "CONFIRMED",
-        },
-      }),
-      prisma.tableBooking.count({
-        where: {
-          status: "CANCELLED",
-        },
-      }),
-      prisma.tableBooking.count({
-        where: {
-          status: "COMPLETED",
-        },
-      }),
-    ]);
+  const [total, groupedCounts] = await Promise.all([
+    prisma.tableBooking.count(),
+    prisma.tableBooking.groupBy({
+      by: ["status"],
+      _count: {
+        _all: true,
+      },
+    }),
+  ]);
+
+  const countsByStatus = groupedCounts.reduce(
+    (acc, group) => {
+      acc[group.status] = group._count._all;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return {
     total,
-    confirmed,
-    cancelled,
-    completed,
+    pending: countsByStatus["PENDING"] ?? 0,
+    confirmed: countsByStatus["CONFIRMED"] ?? 0,
+    cancelled: countsByStatus["CANCELLED"] ?? 0,
+    completed: countsByStatus["COMPLETED"] ?? 0,
   };
 }
 
