@@ -117,14 +117,12 @@ export default function ReservationCard({
 
         {/* Status */}
         <span
-          className={`flex shrink-0 items-center gap-1.5 text-xs font-medium ${
-            statusTextStyles[reservation.status]
-          }`}
+          className={`flex shrink-0 items-center gap-1.5 text-xs font-medium ${statusTextStyles[reservation.status]
+            }`}
         >
           <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              statusDotStyles[reservation.status]
-            }`}
+            className={`h-1.5 w-1.5 rounded-full ${statusDotStyles[reservation.status]
+              }`}
           />
 
           {statusLabels[reservation.status]}
@@ -161,7 +159,7 @@ export default function ReservationCard({
         </div>
 
         {/* Cancel */}
-        {reservation.status === "CONFIRMED" && (
+        {(reservation.status === "CONFIRMED" || reservation.status === "PENDING") && (
           <button
             type="button"
             onClick={(event) => {

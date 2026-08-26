@@ -185,7 +185,7 @@ export default async function ReservationPage({
         </div>
 
         {/* Actions */}
-        {reservation.status === "CONFIRMED" && (
+        {(reservation.status === "CONFIRMED" || reservation.status === "PENDING") && (
           <div className="mt-5 flex items-center justify-between rounded-xl border border-zinc-800/80 bg-zinc-900/30 px-4 py-3">
             <div>
               <p className="text-sm font-medium text-white">
