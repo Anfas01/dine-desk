@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useTransition } from "react";
+import { ChevronDown, Users } from "lucide-react";
 import { BookingStatus } from "@/generated/prisma/client";
 import updateReservationStatus from "@/actions/admin/updateReservationStatus";
 
@@ -24,6 +25,14 @@ const STATUS_STYLES: Record<BookingStatus, string> = {
   CONFIRMED: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
   CANCELLED: "text-rose-400 bg-rose-500/10 border-rose-500/20",
   COMPLETED: "text-sky-400 bg-sky-500/10 border-sky-500/20",
+};
+
+// Matches the tint of the currently-selected status, used for the select's focus ring.
+const STATUS_RING: Record<BookingStatus, string> = {
+  PENDING: "focus:ring-amber-500/30",
+  CONFIRMED: "focus:ring-emerald-500/30",
+  CANCELLED: "focus:ring-rose-500/30",
+  COMPLETED: "focus:ring-sky-500/30",
 };
 
 const ALL_STATUSES: BookingStatus[] = [
@@ -71,44 +80,64 @@ export function AdminReservationRow({ reservation }: AdminReservationRowProps) {
     STATUS_STYLES[reservation.status] ??
     "text-zinc-400 bg-zinc-800/50 border-zinc-700/50";
 
+  const statusRing = STATUS_RING[reservation.status] ?? "focus:ring-zinc-700/50";
+
   return (
-    <tr className="transition-colors hover:bg-zinc-900/60">
-      <td className="px-5 py-4">
-        <p className="text-sm font-medium text-white">{reservation.user.name}</p>
-        <p className="mt-1 text-xs text-zinc-500">{reservation.user.email}</p>
+    <tr className="group border-b border-zinc-800/60 transition-colors last:border-b-0 hover:bg-zinc-900/40">
+      <td className="px-4 py-3.5">
+        <p className="text-sm font-medium text-zinc-100">
+          {reservation.user.name}
+        </p>
+        <p className="mt-0.5 text-xs text-zinc-500">{reservation.user.email}</p>
       </td>
 
-      <td className="px-5 py-4 text-sm text-zinc-400">
-        {formatDate(reservation.bookingDate)}
+      <td className="px-4 py-3.5">
+        <p className="text-sm text-zinc-300">{formatDate(reservation.bookingDate)}</p>
+        <p className="mt-0.5 text-xs text-zinc-500">{formatTime(reservation.startTime)}</p>
       </td>
 
-      <td className="px-5 py-4 text-sm text-zinc-400">
-        {formatTime(reservation.startTime)}
+      <td className="px-4 py-3.5">
+        <span className="inline-flex items-center rounded-md border border-zinc-800 bg-zinc-900/60 px-2 py-1 text-xs font-medium text-zinc-300">
+          Table {reservation.table.number}
+        </span>
       </td>
 
-      <td className="px-5 py-4 text-sm text-zinc-400">
-        Table {reservation.table.number}
+      <td className="px-4 py-3.5">
+        <div className="flex items-center gap-1.5 text-sm text-zinc-300">
+          <Users className="h-3.5 w-3.5 text-zinc-500" strokeWidth={2} />
+          {reservation.guests}
+        </div>
       </td>
 
-      <td className="px-5 py-4 text-sm text-zinc-400">{reservation.guests}</td>
-
-      <td className="px-5 py-4">
-        <select
-          value={reservation.status}
-          onChange={handleStatusChange}
-          disabled={isPending}
-          className={`cursor-pointer rounded-md border px-2 py-1 text-xs font-medium uppercase tracking-wider outline-none transition-opacity focus:ring-1 focus:ring-zinc-700 disabled:opacity-50 ${statusStyle}`}
-        >
-          {ALL_STATUSES.map((status) => (
-            <option
-              key={status}
-              value={status}
-              className="bg-zinc-900 text-zinc-200 uppercase"
-            >
-              {status}
-            </option>
-          ))}
-        </select>
+      <td className="px-4 py-3.5">
+        <div className="relative inline-block">
+          <select
+            value={reservation.status}
+            onChange={handleStatusChange}
+            disabled={isPending}
+            className={`
+              cursor-pointer appearance-none rounded-md border py-1.5 pl-2.5 pr-7
+              text-xs font-medium uppercase tracking-wide outline-none
+              transition-all duration-150
+              focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50
+              ${statusStyle} ${statusRing}
+            `}
+          >
+            {ALL_STATUSES.map((status) => (
+              <option
+                key={status}
+                value={status}
+                className="bg-zinc-900 text-zinc-200"
+              >
+                {status}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 opacity-60"
+            strokeWidth={2.5}
+          />
+        </div>
       </td>
     </tr>
   );

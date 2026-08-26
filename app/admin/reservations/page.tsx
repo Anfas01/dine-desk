@@ -6,24 +6,22 @@ export default async function AdminReservationsPage() {
 
   return (
     <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto w-full max-w-6xl">
+      <div className="mx-auto w-full max-w-6xl space-y-8">
         {/* Header */}
-        <div className="mb-8">
+        <header className="space-y-1">
           <p className="text-sm font-medium text-zinc-500">Management</p>
 
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white">
+          <h1 className="text-2xl font-semibold tracking-tight text-white">
             Reservations
           </h1>
 
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="text-sm text-zinc-400">
             View and manage all restaurant reservations.
           </p>
-        </div>
+        </header>
 
         {/* Reservations Table */}
-        <div className="overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900/40">
-          <AdminReservationsTable reservations={reservations} />
-        </div>
+        <AdminReservationsTable reservations={reservations} />
       </div>
     </main>
   );
