@@ -14,13 +14,17 @@ export default async function findTable(
         },
 
         /*
-         * Table must not have an overlapping confirmed booking.
+         * Table must not have an overlapping active booking.
+         *
+         * Both CONFIRMED and PENDING reservations block the table.
          *
          * Two reservations overlap when:
          *
          * existing.start < requested.end
          * AND
          * existing.end > requested.start
+         *
+         * CANCELLED and COMPLETED reservations do not block the table.
          */
         bookings: {
           none: {
