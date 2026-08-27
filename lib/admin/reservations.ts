@@ -28,25 +28,22 @@ export async function getAdminReservationStats() {
   };
 }
 
+const RESTAURANT_TIME_ZONE = "Asia/Kolkata";
+
 export async function getTodayReservations() {
-  const now = new Date();
-
-  const startOfDay = new Date(now);
-  startOfDay.setHours(0, 0, 0, 0);
-
-  const endOfDay = new Date(now);
-  endOfDay.setHours(23, 59, 59, 999);
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: RESTAURANT_TIME_ZONE,
+  }).format(new Date());
 
   return prisma.tableBooking.findMany({
     where: {
-      bookingDate: {
-        gte: startOfDay,
-        lte: endOfDay,
-      },
+      bookingDate: today,
     },
+
     orderBy: {
       startTime: "asc",
     },
+
     select: {
       id: true,
       bookingDate: true,
@@ -54,11 +51,13 @@ export async function getTodayReservations() {
       endTime: true,
       guests: true,
       status: true,
+
       table: {
         select: {
           number: true,
         },
       },
+
       user: {
         select: {
           name: true,

@@ -38,7 +38,7 @@ export type TableBookingMinAggregateOutputType = {
   id: string | null
   tableId: string | null
   userId: string | null
-  bookingDate: Date | null
+  bookingDate: string | null
   startTime: Date | null
   endTime: Date | null
   guests: number | null
@@ -51,7 +51,7 @@ export type TableBookingMaxAggregateOutputType = {
   id: string | null
   tableId: string | null
   userId: string | null
-  bookingDate: Date | null
+  bookingDate: string | null
   startTime: Date | null
   endTime: Date | null
   guests: number | null
@@ -213,7 +213,7 @@ export type TableBookingGroupByOutputType = {
   id: string
   tableId: string
   userId: string
-  bookingDate: Date
+  bookingDate: string
   startTime: Date
   endTime: Date
   guests: number
@@ -249,7 +249,7 @@ export type TableBookingWhereInput = {
   id?: Prisma.StringFilter<"TableBooking"> | string
   tableId?: Prisma.StringFilter<"TableBooking"> | string
   userId?: Prisma.StringFilter<"TableBooking"> | string
-  bookingDate?: Prisma.DateTimeFilter<"TableBooking"> | Date | string
+  bookingDate?: Prisma.StringFilter<"TableBooking"> | string
   startTime?: Prisma.DateTimeFilter<"TableBooking"> | Date | string
   endTime?: Prisma.DateTimeFilter<"TableBooking"> | Date | string
   guests?: Prisma.IntFilter<"TableBooking"> | number
@@ -282,7 +282,7 @@ export type TableBookingWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.TableBookingWhereInput | Prisma.TableBookingWhereInput[]
   tableId?: Prisma.StringFilter<"TableBooking"> | string
   userId?: Prisma.StringFilter<"TableBooking"> | string
-  bookingDate?: Prisma.DateTimeFilter<"TableBooking"> | Date | string
+  bookingDate?: Prisma.StringFilter<"TableBooking"> | string
   startTime?: Prisma.DateTimeFilter<"TableBooking"> | Date | string
   endTime?: Prisma.DateTimeFilter<"TableBooking"> | Date | string
   guests?: Prisma.IntFilter<"TableBooking"> | number
@@ -318,7 +318,7 @@ export type TableBookingScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"TableBooking"> | string
   tableId?: Prisma.StringWithAggregatesFilter<"TableBooking"> | string
   userId?: Prisma.StringWithAggregatesFilter<"TableBooking"> | string
-  bookingDate?: Prisma.DateTimeWithAggregatesFilter<"TableBooking"> | Date | string
+  bookingDate?: Prisma.StringWithAggregatesFilter<"TableBooking"> | string
   startTime?: Prisma.DateTimeWithAggregatesFilter<"TableBooking"> | Date | string
   endTime?: Prisma.DateTimeWithAggregatesFilter<"TableBooking"> | Date | string
   guests?: Prisma.IntWithAggregatesFilter<"TableBooking"> | number
@@ -329,7 +329,7 @@ export type TableBookingScalarWhereWithAggregatesInput = {
 
 export type TableBookingCreateInput = {
   id?: string
-  bookingDate: Date | string
+  bookingDate: string
   startTime: Date | string
   endTime: Date | string
   guests: number
@@ -344,7 +344,7 @@ export type TableBookingUncheckedCreateInput = {
   id?: string
   tableId: string
   userId: string
-  bookingDate: Date | string
+  bookingDate: string
   startTime: Date | string
   endTime: Date | string
   guests: number
@@ -355,7 +355,7 @@ export type TableBookingUncheckedCreateInput = {
 
 export type TableBookingUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -370,7 +370,7 @@ export type TableBookingUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tableId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -383,7 +383,7 @@ export type TableBookingCreateManyInput = {
   id?: string
   tableId: string
   userId: string
-  bookingDate: Date | string
+  bookingDate: string
   startTime: Date | string
   endTime: Date | string
   guests: number
@@ -394,7 +394,7 @@ export type TableBookingCreateManyInput = {
 
 export type TableBookingUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -407,7 +407,7 @@ export type TableBookingUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tableId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -563,7 +563,7 @@ export type EnumBookingStatusFieldUpdateOperationsInput = {
 
 export type TableBookingCreateWithoutUserInput = {
   id?: string
-  bookingDate: Date | string
+  bookingDate: string
   startTime: Date | string
   endTime: Date | string
   guests: number
@@ -576,7 +576,7 @@ export type TableBookingCreateWithoutUserInput = {
 export type TableBookingUncheckedCreateWithoutUserInput = {
   id?: string
   tableId: string
-  bookingDate: Date | string
+  bookingDate: string
   startTime: Date | string
   endTime: Date | string
   guests: number
@@ -618,7 +618,7 @@ export type TableBookingScalarWhereInput = {
   id?: Prisma.StringFilter<"TableBooking"> | string
   tableId?: Prisma.StringFilter<"TableBooking"> | string
   userId?: Prisma.StringFilter<"TableBooking"> | string
-  bookingDate?: Prisma.DateTimeFilter<"TableBooking"> | Date | string
+  bookingDate?: Prisma.StringFilter<"TableBooking"> | string
   startTime?: Prisma.DateTimeFilter<"TableBooking"> | Date | string
   endTime?: Prisma.DateTimeFilter<"TableBooking"> | Date | string
   guests?: Prisma.IntFilter<"TableBooking"> | number
@@ -629,7 +629,7 @@ export type TableBookingScalarWhereInput = {
 
 export type TableBookingCreateWithoutTableInput = {
   id?: string
-  bookingDate: Date | string
+  bookingDate: string
   startTime: Date | string
   endTime: Date | string
   guests: number
@@ -642,7 +642,7 @@ export type TableBookingCreateWithoutTableInput = {
 export type TableBookingUncheckedCreateWithoutTableInput = {
   id?: string
   userId: string
-  bookingDate: Date | string
+  bookingDate: string
   startTime: Date | string
   endTime: Date | string
   guests: number
@@ -680,7 +680,7 @@ export type TableBookingUpdateManyWithWhereWithoutTableInput = {
 export type TableBookingCreateManyUserInput = {
   id?: string
   tableId: string
-  bookingDate: Date | string
+  bookingDate: string
   startTime: Date | string
   endTime: Date | string
   guests: number
@@ -691,7 +691,7 @@ export type TableBookingCreateManyUserInput = {
 
 export type TableBookingUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -704,7 +704,7 @@ export type TableBookingUpdateWithoutUserInput = {
 export type TableBookingUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tableId?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -716,7 +716,7 @@ export type TableBookingUncheckedUpdateWithoutUserInput = {
 export type TableBookingUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tableId?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -728,7 +728,7 @@ export type TableBookingUncheckedUpdateManyWithoutUserInput = {
 export type TableBookingCreateManyTableInput = {
   id?: string
   userId: string
-  bookingDate: Date | string
+  bookingDate: string
   startTime: Date | string
   endTime: Date | string
   guests: number
@@ -739,7 +739,7 @@ export type TableBookingCreateManyTableInput = {
 
 export type TableBookingUpdateWithoutTableInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -752,7 +752,7 @@ export type TableBookingUpdateWithoutTableInput = {
 export type TableBookingUncheckedUpdateWithoutTableInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -764,7 +764,7 @@ export type TableBookingUncheckedUpdateWithoutTableInput = {
 export type TableBookingUncheckedUpdateManyWithoutTableInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  bookingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookingDate?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   guests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -857,7 +857,7 @@ export type $TableBookingPayload<ExtArgs extends runtime.Types.Extensions.Intern
     id: string
     tableId: string
     userId: string
-    bookingDate: Date
+    bookingDate: string
     startTime: Date
     endTime: Date
     guests: number
@@ -1292,7 +1292,7 @@ export interface TableBookingFieldRefs {
   readonly id: Prisma.FieldRef<"TableBooking", 'String'>
   readonly tableId: Prisma.FieldRef<"TableBooking", 'String'>
   readonly userId: Prisma.FieldRef<"TableBooking", 'String'>
-  readonly bookingDate: Prisma.FieldRef<"TableBooking", 'DateTime'>
+  readonly bookingDate: Prisma.FieldRef<"TableBooking", 'String'>
   readonly startTime: Prisma.FieldRef<"TableBooking", 'DateTime'>
   readonly endTime: Prisma.FieldRef<"TableBooking", 'DateTime'>
   readonly guests: Prisma.FieldRef<"TableBooking", 'Int'>

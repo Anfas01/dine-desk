@@ -17,14 +17,20 @@ export type ActionResponse<T = unknown> = {
 
 export type CreateReservationInput = {
   capacity: number;
-  bookingDate: Date;
+
+  // Calendar date only.
+  // Example: "2026-08-28"
+  bookingDate: string;
+
+  // Actual instant in time.
   startTime: Date;
 };
 
 // --- Actions ---
 
 /**
- * Creates a new table reservation after verifying user authentication and table availability.
+ * Creates a new table reservation after verifying user authentication
+ * and table availability.
  */
 export async function createReservation(
   input: CreateReservationInput
@@ -39,6 +45,7 @@ export async function createReservation(
       };
     }
 
+    // Validate capacity
     if (
       !Number.isFinite(input.capacity) ||
       input.capacity < 1 ||
@@ -50,16 +57,42 @@ export async function createReservation(
       };
     }
 
-    if (
-      Number.isNaN(input.startTime.getTime()) ||
-      Number.isNaN(input.bookingDate.getTime())
-    ) {
+    // Validate booking date format
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(input.bookingDate)) {
       return {
         success: false,
-        message: "Please select a valid date and time.",
+        message: "Please select a valid date.",
       };
     }
 
+    // Validate that the date actually exists.
+    const [year, month, day] = input.bookingDate.split("-").map(Number);
+
+    const dateCheck = new Date(Date.UTC(year, month - 1, day));
+
+    if (
+      dateCheck.getUTCFullYear() !== year ||
+      dateCheck.getUTCMonth() !== month - 1 ||
+      dateCheck.getUTCDate() !== day
+    ) {
+      return {
+        success: false,
+        message: "Please select a valid date.",
+      };
+    }
+
+    // Validate start time
+    if (
+      !(input.startTime instanceof Date) ||
+      Number.isNaN(input.startTime.getTime())
+    ) {
+      return {
+        success: false,
+        message: "Please select a valid time.",
+      };
+    }
+
+    // Reservation must be in the future.
     if (input.startTime.getTime() < Date.now()) {
       return {
         success: false,
@@ -67,13 +100,19 @@ export async function createReservation(
       };
     }
 
+    // Reservation lasts 90 minutes.
     const endTime = new Date(
       input.startTime.getTime() + 90 * 60 * 1000
     );
 
+    /*
+     * Find a table that does not have an overlapping confirmed booking.
+     *
+     * bookingDate is intentionally NOT passed here.
+     * startTime/endTime already identify the reservation interval.
+     */
     const table = await findTable(
       input.capacity,
-      input.bookingDate,
       input.startTime,
       endTime
     );
@@ -89,11 +128,17 @@ export async function createReservation(
       data: {
         tableId: table.id,
         userId: user.id,
+
+        // Store calendar date exactly as selected.
         bookingDate: input.bookingDate,
+
+        // Store actual UTC instant.
         startTime: input.startTime,
         endTime,
+
         guests: input.capacity,
-        // 'status' omitted to naturally default to PENDING from your Prisma schema
+
+        // status defaults to PENDING.
       },
     });
 
@@ -102,7 +147,8 @@ export async function createReservation(
 
     return {
       success: true,
-      message: "Reservation request submitted and is pending confirmation!",
+      message:
+        "Reservation request submitted and is pending confirmation!",
       data: tableBooking,
     };
   } catch (error) {
@@ -116,45 +162,75 @@ export async function createReservation(
 }
 
 /**
- * Cancels an existing reservation if conditions are met (user ownership, active status, future date).
+ * Cancels an existing reservation if conditions are met.
  */
 export async function cancelReservation(
   reservationId: string
 ): Promise<ActionResponse<TableBooking>> {
   try {
     const user = await getUser();
+
     if (!user?.id) {
-      return { success: false, message: "You must be logged in to cancel a reservation." };
+      return {
+        success: false,
+        message: "You must be logged in to cancel a reservation.",
+      };
     }
 
     const reservation = await prisma.tableBooking.findUnique({
-      where: { id: reservationId },
-      select: { id: true, userId: true, status: true, startTime: true },
+      where: {
+        id: reservationId,
+      },
+      select: {
+        id: true,
+        userId: true,
+        status: true,
+        startTime: true,
+      },
     });
 
     if (!reservation) {
-      return { success: false, message: "Reservation not found." };
+      return {
+        success: false,
+        message: "Reservation not found.",
+      };
     }
 
     if (reservation.userId !== user.id) {
-      return { success: false, message: "You don't have permission to cancel this reservation." };
+      return {
+        success: false,
+        message: "You don't have permission to cancel this reservation.",
+      };
     }
 
     if (reservation.status === "CANCELLED") {
-      return { success: false, message: "This reservation is already cancelled." };
+      return {
+        success: false,
+        message: "This reservation is already cancelled.",
+      };
     }
 
     if (reservation.status === "COMPLETED") {
-      return { success: false, message: "Completed reservations cannot be cancelled." };
+      return {
+        success: false,
+        message: "Completed reservations cannot be cancelled.",
+      };
     }
 
     if (reservation.startTime.getTime() < Date.now()) {
-      return { success: false, message: "Past or ongoing reservations cannot be cancelled." };
+      return {
+        success: false,
+        message: "Past or ongoing reservations cannot be cancelled.",
+      };
     }
 
     const updated = await prisma.tableBooking.update({
-      where: { id: reservationId },
-      data: { status: "CANCELLED" },
+      where: {
+        id: reservationId,
+      },
+      data: {
+        status: "CANCELLED",
+      },
     });
 
     revalidatePath("/my-reservations");
@@ -167,7 +243,11 @@ export async function cancelReservation(
     };
   } catch (error) {
     console.error("Cancel reservation error:", error);
-    return { success: false, message: "Failed to cancel reservation. Please try again." };
+
+    return {
+      success: false,
+      message: "Failed to cancel reservation. Please try again.",
+    };
   }
 }
 
@@ -178,12 +258,20 @@ export async function getUserReservations() {
   const user = await getUser();
 
   if (!user?.id) {
-    throw new Error("You must be logged in to view your reservations.");
+    throw new Error(
+      "You must be logged in to view your reservations."
+    );
   }
 
   return await prisma.tableBooking.findMany({
-    where: { userId: user.id },
-    orderBy: { startTime: "asc" },
+    where: {
+      userId: user.id,
+    },
+
+    orderBy: {
+      startTime: "asc",
+    },
+
     select: {
       id: true,
       bookingDate: true,
@@ -191,6 +279,7 @@ export async function getUserReservations() {
       endTime: true,
       guests: true,
       status: true,
+
       table: {
         select: {
           id: true,
@@ -205,11 +294,15 @@ export async function getUserReservations() {
 /**
  * Retrieves a single reservation belonging to the currently authenticated user.
  */
-export async function getReservationById(reservationId: string) {
+export async function getReservationById(
+  reservationId: string
+) {
   const user = await getUser();
 
   if (!user?.id) {
-    throw new Error("You must be logged in to view this reservation.");
+    throw new Error(
+      "You must be logged in to view this reservation."
+    );
   }
 
   if (!reservationId) {
@@ -221,6 +314,7 @@ export async function getReservationById(reservationId: string) {
       id: reservationId,
       userId: user.id,
     },
+
     select: {
       id: true,
       bookingDate: true,
@@ -228,6 +322,7 @@ export async function getReservationById(reservationId: string) {
       endTime: true,
       guests: true,
       status: true,
+
       table: {
         select: {
           id: true,

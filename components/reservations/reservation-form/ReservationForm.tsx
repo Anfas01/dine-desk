@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
+import { fromZonedTime } from "date-fns-tz";
 
 import { createReservation } from "@/actions/reservations";
 
@@ -13,13 +14,27 @@ import ReservationMessage from "./ReservationMessage";
 const MAX_GUESTS = 8;
 const MIN_GUESTS = 1;
 
-const todayISO = () => new Date().toISOString().split("T")[0];
+const RESTAURANT_TIME_ZONE = "Asia/Kolkata";
+
+/**
+ * Returns today's calendar date in the restaurant's timezone.
+ *
+ * Example:
+ * "2026-08-27"
+ */
+const todayISO = () =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: RESTAURANT_TIME_ZONE,
+  }).format(new Date());
 
 export default function ReservationForm() {
   const [capacity, setCapacity] = useState(2);
   const [guestInput, setGuestInput] = useState("2");
 
+  // Calendar date: "YYYY-MM-DD"
   const [bookingDate, setBookingDate] = useState("");
+
+  // Time: "HH:mm"
   const [startTime, setStartTime] = useState("");
 
   const [isPending, startTransition] = useTransition();
@@ -110,6 +125,9 @@ export default function ReservationForm() {
 
     setMessage(null);
 
+    /*
+     * Validate guests
+     */
     const guestsError = validateGuests(guestInput);
 
     if (guestsError || guestInput === "") {
@@ -130,6 +148,9 @@ export default function ReservationForm() {
       return;
     }
 
+    /*
+     * Validate date and time
+     */
     if (!bookingDate || !startTime) {
       setMessage({
         text: "Please select a date and time.",
@@ -138,13 +159,28 @@ export default function ReservationForm() {
       return;
     }
 
-    const startDateTime = new Date(`${bookingDate}T${startTime}`);
-    const selectedDate = new Date(`${bookingDate}T00:00:00`);
+    /*
+     * Convert the selected restaurant-local date/time into
+     * an absolute DateTime.
+     *
+     * Example:
+     *
+     * bookingDate = "2026-08-28"
+     * startTime   = "19:00"
+     *
+     * becomes:
+     *
+     * 2026-08-28 19:00 Asia/Kolkata
+     */
+    const startDateTime = fromZonedTime(
+      `${bookingDate}T${startTime}:00`,
+      RESTAURANT_TIME_ZONE
+    );
 
-    if (
-      Number.isNaN(startDateTime.getTime()) ||
-      Number.isNaN(selectedDate.getTime())
-    ) {
+    /*
+     * Validate resulting Date object.
+     */
+    if (Number.isNaN(startDateTime.getTime())) {
       setMessage({
         text: "Please select a valid date and time.",
         error: true,
@@ -152,6 +188,9 @@ export default function ReservationForm() {
       return;
     }
 
+    /*
+     * Reservation must be in the future.
+     */
     if (startDateTime.getTime() < Date.now()) {
       setMessage({
         text: "Please select a future time.",
@@ -160,11 +199,19 @@ export default function ReservationForm() {
       return;
     }
 
+    /*
+     * Send reservation to server.
+     *
+     * IMPORTANT:
+     * bookingDate stays as the original "YYYY-MM-DD" string.
+     *
+     * We do NOT convert bookingDate to a Date.
+     */
     startTransition(async () => {
       try {
         const result = await createReservation({
           capacity: guests,
-          bookingDate: selectedDate,
+          bookingDate,
           startTime: startDateTime,
         });
 
@@ -182,6 +229,9 @@ export default function ReservationForm() {
           error: false,
         });
 
+        /*
+         * Reset form after successful reservation.
+         */
         setCapacity(2);
         setGuestInput("2");
         setBookingDate("");
