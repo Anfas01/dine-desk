@@ -24,7 +24,9 @@ export default async function findTable(
          */
         bookings: {
           none: {
-            status: "CONFIRMED",
+            status: {
+              in: ["CONFIRMED", "PENDING"],
+            },
 
             startTime: {
               lt: endTime,
