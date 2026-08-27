@@ -20,7 +20,7 @@ export type BookingStatus =
 
 export type Reservation = {
   id: string;
-  bookingDate: Date;
+  bookingDate: string;
   startTime: Date;
   endTime: Date;
   guests: number;
@@ -57,8 +57,12 @@ const statusLabels: Record<BookingStatus, string> = {
   COMPLETED: "Completed",
 };
 
-function formatDate(date: Date) {
-  return new Date(date).toLocaleDateString("en-US", {
+function formatDate(date: string) {
+  const [year, month, day] = date.split("-").map(Number);
+
+  const calendarDate = new Date(year, month - 1, day);
+
+  return calendarDate.toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -117,12 +121,14 @@ export default function ReservationCard({
 
         {/* Status */}
         <span
-          className={`flex shrink-0 items-center gap-1.5 text-xs font-medium ${statusTextStyles[reservation.status]
-            }`}
+          className={`flex shrink-0 items-center gap-1.5 text-xs font-medium ${
+            statusTextStyles[reservation.status]
+          }`}
         >
           <span
-            className={`h-1.5 w-1.5 rounded-full ${statusDotStyles[reservation.status]
-              }`}
+            className={`h-1.5 w-1.5 rounded-full ${
+              statusDotStyles[reservation.status]
+            }`}
           />
 
           {statusLabels[reservation.status]}
@@ -159,7 +165,8 @@ export default function ReservationCard({
         </div>
 
         {/* Cancel */}
-        {(reservation.status === "CONFIRMED" || reservation.status === "PENDING") && (
+        {(reservation.status === "CONFIRMED" ||
+          reservation.status === "PENDING") && (
           <button
             type="button"
             onClick={(event) => {
