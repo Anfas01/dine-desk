@@ -38,13 +38,12 @@ export function TableCard({ table }: TableCardProps) {
             </span>
 
             <span
-              className={`h-1.5 w-1.5 rounded-full ${
-                hasBookings ? "bg-emerald-400" : "bg-zinc-700"
-              }`}
+              className={`h-1.5 w-1.5 rounded-full ${hasBookings ? "bg-emerald-400" : "bg-zinc-700"
+                }`}
             />
           </div>
 
-          <h3 className="mt-1.5 text-2xl font-semibold tracking-tight text-white">
+          <h3 className="mt-1.5 truncate text-2xl font-semibold tracking-tight text-white">
             #{table.number}
           </h3>
         </div>
@@ -71,9 +70,8 @@ export function TableCard({ table }: TableCardProps) {
           </p>
 
           <p
-            className={`mt-1 text-sm font-medium ${
-              hasBookings ? "text-emerald-400" : "text-zinc-500"
-            }`}
+            className={`mt-1 text-sm font-medium ${hasBookings ? "text-emerald-400" : "text-zinc-500"
+              }`}
           >
             {table._count.bookings}
           </p>

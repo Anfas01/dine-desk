@@ -27,7 +27,6 @@ const STATUS_STYLES: Record<BookingStatus, string> = {
   COMPLETED: "text-sky-400 bg-sky-500/10 border-sky-500/20",
 };
 
-// Matches the tint of the currently-selected status, used for the select's focus ring.
 const STATUS_RING: Record<BookingStatus, string> = {
   PENDING: "focus:ring-amber-500/30",
   CONFIRMED: "focus:ring-emerald-500/30",
@@ -84,39 +83,45 @@ export function AdminReservationRow({ reservation }: AdminReservationRowProps) {
 
   return (
     <tr className="group border-b border-zinc-800/60 transition-colors last:border-b-0 hover:bg-zinc-900/40">
-      <td className="px-4 py-3.5">
-        <p className="text-sm font-medium text-zinc-100">
+      <td className="max-w-55 px-4 py-3.5 align-top">
+        <p className="truncate text-sm font-medium text-zinc-100">
           {reservation.user.name}
         </p>
-        <p className="mt-0.5 text-xs text-zinc-500">{reservation.user.email}</p>
+        <p className="mt-0.5 truncate text-xs text-zinc-500">
+          {reservation.user.email}
+        </p>
       </td>
 
-      <td className="px-4 py-3.5">
-        <p className="text-sm text-zinc-300">{formatDate(reservation.bookingDate)}</p>
-        <p className="mt-0.5 text-xs text-zinc-500">{formatTime(reservation.startTime)}</p>
+      <td className="px-4 py-3.5 align-top">
+        <p className="whitespace-nowrap text-sm text-zinc-300">
+          {formatDate(reservation.bookingDate)}
+        </p>
+        <p className="mt-0.5 whitespace-nowrap text-xs text-zinc-500">
+          {formatTime(reservation.startTime)}
+        </p>
       </td>
 
-      <td className="px-4 py-3.5">
-        <span className="inline-flex items-center rounded-md border border-zinc-800 bg-zinc-900/60 px-2 py-1 text-xs font-medium text-zinc-300">
+      <td className="px-4 py-3.5 align-top">
+        <span className="inline-flex items-center whitespace-nowrap rounded-md border border-zinc-800 bg-zinc-900/60 px-2 py-1 text-xs font-medium text-zinc-300">
           Table {reservation.table.number}
         </span>
       </td>
 
-      <td className="px-4 py-3.5">
-        <div className="flex items-center gap-1.5 text-sm text-zinc-300">
-          <Users className="h-3.5 w-3.5 text-zinc-500" strokeWidth={2} />
+      <td className="px-4 py-3.5 align-top">
+        <div className="flex items-center gap-1.5 whitespace-nowrap text-sm text-zinc-300">
+          <Users className="h-3.5 w-3.5 shrink-0 text-zinc-500" strokeWidth={2} />
           {reservation.guests}
         </div>
       </td>
 
-      <td className="px-4 py-3.5">
+      <td className="px-4 py-3.5 align-top">
         <div className="relative inline-block">
           <select
             value={reservation.status}
             onChange={handleStatusChange}
             disabled={isPending}
             className={`
-              cursor-pointer appearance-none rounded-md border py-1.5 pl-2.5 pr-7
+              min-h-9 cursor-pointer appearance-none rounded-md border py-1.5 pl-2.5 pr-7
               text-xs font-medium uppercase tracking-wide outline-none
               transition-all duration-150
               focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50

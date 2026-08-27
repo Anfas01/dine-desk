@@ -27,7 +27,7 @@ function OverviewStat({ label, value, icon: Icon }: OverviewStatProps) {
 
       <p className="mt-4 text-xs font-medium text-zinc-500">{label}</p>
 
-      <p className="mt-1 text-lg font-semibold text-white">{value}</p>
+      <p className="mt-1 truncate text-lg font-semibold text-white">{value}</p>
     </div>
   );
 }
@@ -57,74 +57,72 @@ export default async function TablePage({ params }: TablePageProps) {
   }));
 
   return (
-    <main className="min-h-screen px-6 py-8">
-      <div className="mx-auto w-full max-w-6xl space-y-8">
-        {/* Back Link */}
-        <Link
-          href="/admin/tables"
-          className="inline-flex w-fit items-center gap-2 text-sm text-zinc-500 transition-colors duration-150 hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" strokeWidth={2} />
-          Tables
-        </Link>
+    <div className="space-y-8">
+      {/* Back Link */}
+      <Link
+        href="/admin/tables"
+        className="inline-flex w-fit items-center gap-2 text-sm text-zinc-500 transition-colors duration-150 hover:text-white"
+      >
+        <ArrowLeft className="h-4 w-4" strokeWidth={2} />
+        Tables
+      </Link>
 
-        {/* Header */}
-        <header className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-zinc-500">
-              Table management
-            </p>
+      {/* Header */}
+      <header className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div className="min-w-0 space-y-1">
+          <p className="text-sm font-medium text-zinc-500">
+            Table management
+          </p>
 
-            <h1 className="text-3xl font-semibold tracking-tight text-white">
-              Table #{table.number}
-            </h1>
+          <h1 className="truncate text-3xl font-semibold tracking-tight text-white">
+            Table #{table.number}
+          </h1>
 
-            <p className="text-sm text-zinc-400">
-              View table information and reservation history.
-            </p>
-          </div>
+          <p className="text-sm text-zinc-400">
+            View table information and reservation history.
+          </p>
+        </div>
 
-          {/* Status Badge */}
-          <div className="flex w-fit items-center gap-2 rounded-lg border border-zinc-800/60 bg-zinc-900/30 px-3 py-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            <span className="text-xs font-medium text-zinc-400">Active</span>
-          </div>
-        </header>
+        {/* Status Badge */}
+        <div className="flex w-fit shrink-0 items-center gap-2 rounded-lg border border-zinc-800/60 bg-zinc-900/30 px-3 py-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          <span className="text-xs font-medium text-zinc-400">Active</span>
+        </div>
+      </header>
 
-        {/* Overview Cards */}
-        <section className="grid gap-4 sm:grid-cols-3">
-          <OverviewStat
-            label="Table number"
-            value={`#${table.number}`}
-            icon={Hash}
-          />
-          <OverviewStat
-            label="Seating capacity"
-            value={`${table.capacity} ${table.capacity === 1 ? "guest" : "guests"}`}
-            icon={UsersRound}
-          />
-          <OverviewStat
-            label="Total reservations"
-            value={String(table.bookings.length)}
-            icon={CalendarDays}
-          />
-        </section>
+      {/* Overview Cards */}
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <OverviewStat
+          label="Table number"
+          value={`#${table.number}`}
+          icon={Hash}
+        />
+        <OverviewStat
+          label="Seating capacity"
+          value={`${table.capacity} ${table.capacity === 1 ? "guest" : "guests"}`}
+          icon={UsersRound}
+        />
+        <OverviewStat
+          label="Total reservations"
+          value={String(table.bookings.length)}
+          icon={CalendarDays}
+        />
+      </section>
 
-        {/* Reservations Section */}
-        <section className="space-y-4">
-          <div>
-            <h2 className="text-base font-semibold text-white">
-              Reservations
-            </h2>
+      {/* Reservations Section */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-white">
+            Reservations
+          </h2>
 
-            <p className="mt-1 text-sm text-zinc-500">
-              Reservations associated with this table.
-            </p>
-          </div>
+          <p className="mt-1 text-sm text-zinc-500">
+            Reservations associated with this table.
+          </p>
+        </div>
 
-          <AdminReservationsTable reservations={reservations} />
-        </section>
-      </div>
-    </main>
+        <AdminReservationsTable reservations={reservations} />
+      </section>
+    </div>
   );
 }
